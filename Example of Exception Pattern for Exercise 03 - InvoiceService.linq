@@ -136,12 +136,12 @@ public InvoiceView TestGetInvoice(int invoiceID)
 	}
 	catch (ArgumentNullException ex)
 	{
-		GetInnerException(ex).Message.Dump();
+		GetInnerMostException(ex).Message.Dump();
 	}
 
 	catch (Exception ex)
 	{
-		GetInnerException(ex).Message.Dump();
+		GetInnerMostException(ex).Message.Dump();
 	}
 	#endregion
 	return null;  //  Ensure a valid return value even on failure
@@ -164,12 +164,12 @@ public InvoiceView TestAddEditInvoice(InvoiceView invoiceView)
 	}
 	catch (ArgumentNullException ex)
 	{
-		GetInnerException(ex).Message.Dump();
+		GetInnerMostException(ex).Message.Dump();
 	}
 
 	catch (Exception ex)
 	{
-		GetInnerException(ex).Message.Dump();
+		GetInnerMostException(ex).Message.Dump();
 	}
 	#endregion
 	return null;  //  Ensure a valid return value even on failure
@@ -178,7 +178,7 @@ public InvoiceView TestAddEditInvoice(InvoiceView invoiceView)
 
 //	This region contains support methods for testing
 #region Support Methods
-public Exception GetInnerException(System.Exception ex)
+public Exception GetInnerMostException(System.Exception ex)
 {
 	while (ex.InnerException != null)
 		ex = ex.InnerException;
@@ -379,8 +379,7 @@ public InvoiceView AddEditInvoice(InvoiceView invoiceView)
 	}
 
 	//	If there are errors present in the error list:
-	//	NOTE:  YOU CAN ONLY HAVE ONE CHECK FOR ERRORS AND SAVE CHANGES
-	//			  IN A METHOD
+	//	NOTE:  YOU CAN ONLY HAVE ONE SAVE CHANGES IN A METHOD
 	if (errorList.Count > 0)
 	{
 		// Clear changes to maintain data integrity.
@@ -400,8 +399,18 @@ public InvoiceView AddEditInvoice(InvoiceView invoiceView)
 		{
 			Invoices.Update(invoice);
 		}
+
 		//	NOTE:  YOU CAN ONLY HAVE ONE SAVE CHANGES IN A METHOD	
-		SaveChanges();
+		try
+		{
+			SaveChanges();
+		}
+		catch(Exception ex)
+		{
+			// Clear changes to maintain data integrity.
+			ChangeTracker.Clear();
+			throw new Exception(ex);
+		}
 	}
 	return GetInvoice(invoice.InvoiceID);
 }
