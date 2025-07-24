@@ -35,8 +35,8 @@ void Main()
 	Console.WriteLine("=====  Add New Invoice Fail =====");
 	Console.WriteLine("==================");
 
-	//	rule:	customer id must be supply
-	//	rule:	employee id must be supply	
+	//	rule:	customer id must be supplied
+	//	rule:	employee id must be supplied	
 	//	rule:	there must be invoice lines provided
 	//	rule:	for each invoice line, there must be a part
 	//	rule:	for each invoice line, the price cannot be less than zero
